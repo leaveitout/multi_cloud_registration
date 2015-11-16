@@ -10,6 +10,7 @@
 #include <memory>
 #include <pcl/io/openni2_grabber.h>
 #include <pcl/point_cloud.h>
+#include <pcl/filters/extract_indices.h>
 
 #include <opencv2/imgproc/imgproc.hpp>
 
@@ -37,6 +38,8 @@ private:
     std::mutex corners_mutex_;
 
     CloudConstPtr cloud_;
+    CloudConstPtr corners_cloud_;
+
     boost::shared_ptr<pcl::io::openni2::Image> image_;
     unsigned char *rgb_data_;
     unsigned rgb_data_size_;
@@ -71,8 +74,25 @@ private:
         // TODO: Move this out of the data acquisition code
 //        image_lock.unlock();
         std::lock_guard<std::mutex> corners_lock(corners_mutex_);
-        corners_ = SquareDetector::detectSquareCorners(frame, name_);
-        SquareDetector::drawSquareCorners(frame, corners_, palette_);
+        auto point_indices = SquareDetector::getPointIndicesOfCorners(frame, name_, palette_);
+        image_lock.unlock();
+        pcl::PointCloud<pcl::PointXYZRGBA>::Ptr correspondence_cloud(new pcl::PointCloud<pcl::PointXYZRGBA>);
+        // Extract the inliers
+        // Create the filtering object
+        // TODO: Check timing to make sure that the image and cloud are the same time
+        pcl::ExtractIndices<pcl::PointXYZRGBA> extract;
+        std::unique_lock<std::mutex> cloud_lock(cloud_mutex_);
+        extract.setInputCloud (cloud_);
+        extract.setIndices (point_indices);
+        extract.setNegative (false);
+        extract.filter (*correspondence_cloud);
+        cloud_lock.unlock();
+        std::cerr << "PointCloud representing the keypoints: " <<
+                correspondence_cloud->width * correspondence_cloud->height << " data points." << std::endl;
+//        for(auto i: point_indices->indices)
+//            Logger::log(Logger::INFO, std::to_string(i));
+//        corners_ = SquareDetector::detectSquareCorners(frame, name_);
+//        SquareDetector::drawSquareCorners(frame, corners_, palette_);
     }
 
 public:
@@ -136,12 +156,18 @@ public:
         return false;
     }
 
-    void getCorners(std::shared_ptr<Corners>& corners) {
+    void getCornersCloud(CloudConstPtr& corners_cloud) {
         if(corners_mutex_.try_lock()) {
-            corners_.swap(corners);
+            corners_cloud_.swap(corners_cloud);
             corners_mutex_.unlock();
         }
     }
+//    void getCorners(std::shared_ptr<Corners>& corners) {
+//        if(corners_mutex_.try_lock()) {
+//            corners_.swap(corners);
+//            corners_mutex_.unlock();
+//        }
+//    }
 };
 
 #endif //PCL_MULTI_CAMERA_REGISTRATION_VIEWERNODE_H

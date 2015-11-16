@@ -92,7 +92,7 @@ private:
             }
 
             std::shared_ptr<Corners> corners;
-            nodes_.at(camera)->getCorners(corners);
+//            nodes_.at(camera)->getCorners(corners);
             pcl::PointIndices::Ptr indices (new pcl::PointIndices ());
 //            indices->
             std::string cloud_name = nodes_.at(camera)->getName();

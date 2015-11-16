@@ -12,9 +12,23 @@
 #include "CameraId.hpp"
 
 
-//pcl::PointIndices::Ptr SquareDetector::getPointIndicesOfCoArners(shared_ptr<vector<vector<Point2d>>> corners, Mat image) {
-//
-//}
+pcl::PointIndices::Ptr SquareDetector::getPointIndicesOfCorners( Mat image,
+                                                                 string camera_id,
+                                                                 shared_ptr<Palette> palette) {
+    auto corners = detectSquareCorners(image, camera_id);
+    pcl::PointIndicesPtr indices (new pcl::PointIndices());
+    if(corners)
+        for(const auto& sq : *corners)
+            for(const auto& pt : sq) {
+                int i = static_cast<int>(round(pt.y) * image.rows + round(pt.x));
+                indices->indices.push_back(i);
+            }
+
+    if(palette)
+        drawSquareCorners(image, corners, palette);
+
+    return indices;
+}
 
 shared_ptr<vector<vector<Point2d>>> SquareDetector::detectSquareCorners(Mat image, string camera_id) {
     if(image.empty()){
@@ -25,10 +39,10 @@ shared_ptr<vector<vector<Point2d>>> SquareDetector::detectSquareCorners(Mat imag
     Mat gray;
     cvtColor(image, gray, CV_BGR2GRAY);
     auto corners = detectCorners(gray);
-//    for(auto& corner : corners)
-//        circle(image, corner, CIRCLE_RADIUS, Scalar(255,0,0), CIRCLE_THICKNESS);
+    for(auto& corner : corners)
+        circle(image, corner, CIRCLE_RADIUS, Scalar(255,0,0), CIRCLE_THICKNESS);
     auto squares = detectSquares(gray);
-//    drawContours(image, squares, -1, Scalar(0,0,255));
+    drawContours(image, squares, -1, Scalar(0,0,255));
     auto square_corners(resolveCornersToSquares(corners, squares));
     bool valid = false;
 

@@ -7,6 +7,8 @@
 
 #include <memory>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <pcl/PointIndices.h>
 #include "KeypointSorter.hpp"
 #include "Palette.hpp"
 
@@ -15,10 +17,13 @@ using namespace cv;
 
 class SquareDetector {
 public:
+    static pcl::PointIndices::Ptr getPointIndicesOfCorners(Mat image,
+                                                           string camera_id,
+                                                           shared_ptr<Palette> palette = nullptr);
     static shared_ptr<vector<vector<Point2d>>> detectSquareCorners(Mat image, string camera_id);
     static void drawSquareCorners(Mat image,
                                   shared_ptr<vector<vector<Point2d>>> squareCorners,
-                                  shared_ptr<Palette> palette);
+                                  shared_ptr<Palette> palette = nullptr);
 
 private:
     // TODO: Create Mat objects to store allocated images
@@ -44,7 +49,7 @@ private:
     static constexpr double MAX_DIST_CORNER_TO_CONTOUR_PT = 5.0;
 
     // Parameters for Shi-Tomasi algorithm
-    static constexpr int MAX_CORNERS = 15;
+    static constexpr int MAX_CORNERS = 20;
     static constexpr double QUALITY_LEVEL = 0.01;
     static constexpr double MIN_DISTANCE = 10.0;
     static constexpr double DEFAULT_K = 0.04;
