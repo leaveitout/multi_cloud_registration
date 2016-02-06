@@ -106,7 +106,7 @@ public:
         std::stringstream ss1;
         ss1 << "Camera " << name_ << " ";
         cloud_timer_.reset(new Timer(ss1.str().append("Cloud Timer")));
-        image_timer_.reset(new Timer(ss1.str().append("Image TImer")));
+        image_timer_.reset(new Timer(ss1.str().append("Image Timer")));
     }
 
     ~ViewerNode() {

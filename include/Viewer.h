@@ -14,7 +14,6 @@
 #include <pcl/visualization/image_viewer.h>
 
 #include "ViewerNode.h"
-#include "QRDetector.h"
 #include "CameraId.hpp"
 
 typedef pcl::io::OpenNI2Grabber NI2Grabber;
@@ -91,9 +90,9 @@ private:
                 cloud_viewer_init_ = true;
             }
 
-            std::shared_ptr<Corners> corners;
+//            std::shared_ptr<Corners> corners;
 //            nodes_.at(camera)->getCorners(corners);
-            pcl::PointIndices::Ptr indices (new pcl::PointIndices ());
+//            pcl::PointIndices::Ptr indices (new pcl::PointIndices ());
 //            indices->
             std::string cloud_name = nodes_.at(camera)->getName();
             if (!cloud_viewer_->updatePointCloud (cloud, cloud_name)) {

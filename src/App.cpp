@@ -3,6 +3,7 @@
 //
 
 #include <Logger.h>
+#include <Viewer.h>
 #include "App.h"
 
 App::App(int argc, char **argv) {
@@ -29,7 +30,10 @@ int App::exec() {
         g->start();
     }
 
-    viewer_.reset(new Viewer<pcl::PointXYZRGBA>(grabbers.at(1), grabbers.at(0), grabbers.at(2)));
+    std::unique_ptr<ThreadedViewer<pcl::PointXYZRGBA>> viewer_;
+    viewer_.reset(new ThreadedViewer<pcl::PointXYZRGBA>(grabbers.at(1), grabbers.at(0), grabbers.at(2)));
+//    std::unique_ptr<Viewer<pcl::PointXYZRGBA>> viewer_;
+//    viewer_.reset(new Viewer<pcl::PointXYZRGBA>(grabbers.at(1), grabbers.at(0), grabbers.at(2)));
     viewer_->run();
 
     for (auto g : grabbers) {

@@ -8,9 +8,9 @@
 #include <string>
 
 namespace CameraId {
-    static std::string left = "Left";
-    static std::string center = "Center";
-    static std::string right = "Right";
-}
+    const std::string left = "Left";
+    const std::string center = "Center";
+    const std::string right = "Right";
+};
 
 #endif //MULTI_CLOUD_REGISTRATION_CAMERAID_HPP

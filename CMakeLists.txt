@@ -14,7 +14,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 set(SOURCE_FILES src/main.cpp src/App.cpp include/App.h src/Logger.cpp
         include/Viewer.h include/ViewerNode.h include/QRDetector.h src/QRDetector.cpp
-        src/SquareDetector.cpp include/SquareDetector.h src/KeypointSorter.cpp include/KeypointSorter.hpp include/CameraId.hpp include/Palette.hpp)
+        src/SquareDetector.cpp include/SquareDetector.h src/KeypointSorter.cpp include/KeypointSorter.hpp include/CameraId.hpp include/Palette.hpp include/ThreadedViewer.hpp include/ViewerNodeThreaded.hpp)
 include_directories(${CMAKE_HOME_DIRECTORY}/include)
 
 add_executable(multi_cloud_registration ${SOURCE_FILES})
